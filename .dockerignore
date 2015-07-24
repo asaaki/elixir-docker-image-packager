@@ -1,0 +1,9 @@
+.gitignore
+.git
+_build
+deps
+Makefile
+dockerfiles
+erl_crash.dump
+rel
+*.ez

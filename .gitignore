@@ -1,0 +1,5 @@
+/app
+/tarballs/*.gz
+dockerfiles/Dockerfile.release
+erl_crash.dump
+*.ez

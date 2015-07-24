@@ -1,0 +1,13 @@
+FROM msaraiva/elixir-dev:1.0.5
+# msaraiva/elixir
+# msaraiva/elixir-gcc
+
+RUN apk --update add gcc make libc-dev libgcc zsh vim erlang-eunit && rm -rf /var/cache/apk/*
+RUN mix local.hex --force && mix local.rebar --force
+
+ENV BUILD=/build MIX_ENV=prod
+
+WORKDIR $BUILD
+COPY . $BUILD
+
+CMD ["make", "-f", "package/Makefile"]
