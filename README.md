@@ -175,8 +175,11 @@ _(For the curious: It's using `docker import`)_
 
 ## Caveats
 
-Avoid packages with C extensions (NIFs or ports to external binaries). This is not well-tested yet.
-Most likely you would need to adjust _Dockerfile.stage_ to meet the requirements/dependencies.
+Beware of hex packages which have dependencies to the system (shared libraries or tools/binaries).
+If [step 2](#step-2-build-application-release) fails then it's probably because of missing stuff.
+Adjust the _dockerfiles/Dockerfile.stage_ to your needs: add packages (via _[apk](http://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management)_), download tools, make rainbows.
+
+Use `make enter-stage` to do all this stuff.
 
 ## FAQ
 

@@ -32,6 +32,9 @@ build-stage:
 build-package: build-stage
 	$(DOCKER_RUN) $(STAGE_VOLUMES) -ti --privileged $(IMG_NAME_STAGE)
 
+enter-stage: build-stage
+	$(DOCKER_RUN) $(STAGE_VOLUMES) -ti --privileged $(IMG_NAME_STAGE) /bin/sh
+
 ### Helpers
 
 remove: remove-containers remove-untagged-images
