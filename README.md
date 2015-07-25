@@ -64,14 +64,12 @@ $ du -hd1 /app/lib
 216.0K  /app/lib/crypto-3.6
 1.5M    /app/lib/kernel-4.0
 3.1M    /app/lib/stdlib-2.5
-20.0K   /app/lib/standalone-0.1.0
+20.0K   /app/lib/my_awesome_app-0.1.0
 3.1M    /app/lib/elixir-1.0.5
 52.0K   /app/lib/consolidated
 1.6M    /app/lib/compiler-6.0
 396.0K  /app/lib/sasl-2.5
 ```
-
-`standalone-0.1.0` is the dummy app, so it doesn't really account for the image size at all.
 
 Therefore the 20 MB can be seen as the lower limit of an image with the necessary runtime tools.
 
