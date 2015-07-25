@@ -152,9 +152,6 @@ make run-release
 
 If everything went well, your release should be up and running now.
 
-_(You might need to stop the container with `docker stop ...`,
-since the Erlang VM within the container doesn't like to react on Ctrl+C via docker at all.)_
-
 ## How it works
 
 The whole build/packaging process happens in Docker containers.

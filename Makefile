@@ -20,7 +20,7 @@ STAGE_VOLUMES   = \
 	-v $(HOST_TARBALLS_DIR):$(TARBALLS_DIR)
 
 RELEASE_ROOTFS   = $(HOST_TARBALLS_DIR)/rootfs.tar.gz
-RELEASE_SETTINGS = --change 'CMD ["/app/bin/$(APPNAME)", "foreground"]'
+RELEASE_SETTINGS = --change 'CMD trap exit TERM; /app/bin/$(APPNAME) foreground & wait'
 
 all: build
 
