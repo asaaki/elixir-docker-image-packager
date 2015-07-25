@@ -58,3 +58,6 @@ remove-containers:
 
 remove-untagged-images:
 	-docker rmi `docker images | awk '$$2 ~ /none/ {print $$3}'`
+
+doctoc:
+	@doctoc README.md --github --maxlevel 4 --title '## TOC'
