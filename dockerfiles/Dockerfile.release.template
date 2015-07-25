@@ -1,3 +1,0 @@
-FROM scratch
-ADD tarballs/rootfs.tar.gz /
-CMD ["/app/bin/###APPNAME###", "foreground"]
