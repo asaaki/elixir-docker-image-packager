@@ -16,8 +16,8 @@ HEX_PKG_DIR       = /root/.hex/packages
 HOST_TARBALLS_DIR = $(shell pwd)/tarballs
 TARBALLS_DIR      = /stage/tarballs
 STAGE_VOLUMES   = \
-	-v=$(HOST_HEX_PKG_DIR):$(HEX_PKG_DIR) \
-	-v=$(HOST_TARBALLS_DIR):$(TARBALLS_DIR)
+	-v $(HOST_HEX_PKG_DIR):$(HEX_PKG_DIR) \
+	-v $(HOST_TARBALLS_DIR):$(TARBALLS_DIR)
 
 all: build
 

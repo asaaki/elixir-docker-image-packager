@@ -161,7 +161,7 @@ If you ignore the static asset compilation step, then yes, it does.
 After a successful build you can test it like this:
 
 ```shell
-docker run --rm -e "PORT=4000" -p=4000:4000 local/release-image
+docker run --rm -e "PORT=4000" -p 4000:4000 local/release-image
 ```
 
 ## Why?
