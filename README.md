@@ -167,9 +167,9 @@ The process is split in 2 steps:
 
 ### Step 1: The stage environment
 
-#### Phase 1: Building the stage image
-
 Most work is done here.
+
+#### Phase 1: Building the stage image
 
 First the stage image is created, which is based on [asaaki/elixir-base-dev](https://github.com/asaaki/elixir-base-dev-docker).
 In the _dockerfiles/Dockerfile.stage_ you can adjust the steps for your desired environment.
