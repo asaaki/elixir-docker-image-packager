@@ -27,8 +27,8 @@ Attempt to create the possibly smallest Docker image for an Elixir release.
   - [Step 4: Create release image](#step-4-create-release-image)
 - [Caveats](#caveats)
 - [FAQ](#faq)
-  - [Does it work for Phoenix apps?](#does-it-work-for-phoenix-apps)
   - [Why?](#why)
+  - [Does it work for Phoenix apps?](#does-it-work-for-phoenix-apps)
   - [How different is it from ...?](#how-different-is-it-from-)
     - [msaraiva's "Erlang/Elixir on Alpine Linux"](#msaraivas-erlangelixir-on-alpine-linux)
   - [Is it free?](#is-it-free)
@@ -180,6 +180,17 @@ Most likely you would need to adjust _Dockerfile.stage_ to meet the requirements
 
 ## FAQ
 
+### Why?
+
+Not just for fun, but to save my sanity by not using overly huge, crazily humongous, tremendously gigantic Ubuntu images.*
+
+There is no need for custom application images which reach the 1 GB mark.
+
+And there is no need for images with risky and unnecessary cruft in it.
+
+_*) Yes, I know, the Ubuntu base image is less than 200 MB, but when you start building your custom image onto it,
+then it will quickly grow as hell even if you try to be careful._
+
 ### Does it work for Phoenix apps?
 
 If you ignore the static asset compilation step, then yes, it does.
@@ -192,17 +203,6 @@ docker run --rm -e "PORT=4000" -p 4000:4000 local/release-image
 ```
 
 You need to set the `PORT` environment variable, otherwise the app will just crash (only in Phoenix's default config).
-
-### Why?
-
-Not just for fun, but to save my sanity by not using overly huge, crazily humongous, tremendously gigantic Ubuntu images.*
-
-There is no need for custom application images which reach the 1 GB mark.
-
-And there is no need for images with risky and unnecessary cruft in it.
-
-_*) Yes, I know, the Ubuntu base image is less than 200 MB, but when you start building your custom image onto it,
-then it will quickly grow as hell even if you try to be careful._
 
 ### How different is it from ...?
 
