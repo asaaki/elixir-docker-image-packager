@@ -1,9 +1,5 @@
-.gitignore
 .git
-_build
-deps
+.gitignore
+LICENSE
 Makefile
 dockerfiles
-erl_crash.dump
-rel
-*.ez
