@@ -2,11 +2,7 @@
 
 include package/shared.mk
 
-STAGE   = /stage
-TARDIR  = $(STAGE)/tarballs
-TARBALL = $(TARDIR)/rootfs.tar.gz
-
-ROOTFS         = $(STAGE)/rootfs
+ROOTFS         = $(STAGE_DIR)/rootfs
 ROOTFS_BIN     = $(ROOTFS)/bin
 ROOTFS_SH      = $(ROOTFS_BIN)/sh
 ROOTFS_APP     = $(ROOTFS)/app
@@ -25,15 +21,15 @@ info:
 postinfo:
 	@echo "... finished!"
 
-tarball: $(TARBALL)
+tarball: $(ROOTFS_TARBALL)
 
-$(TARBALL): $(TARDIR) $(ROOTFS_SYSTEM_FILES) $(ROOTFS_SH) $(ROOTFS_APP_BIN)
+$(ROOTFS_TARBALL): $(TARBALLS_DIR) $(ROOTFS_SYSTEM_FILES) $(ROOTFS_SH) $(ROOTFS_APP_BIN)
 	cd $(ROOTFS) && tar -czvf $@ .
 
-$(TARDIR): $(STAGE)
+$(TARBALLS_DIR): $(STAGE_DIR)
 	mkdir -p $@
 
-$(STAGE):
+$(STAGE_DIR):
 	mkdir -p $@
 
 $(ROOTFS_SYSTEM_FILES): $(ROOTFS)%: $(ROOTFS)
