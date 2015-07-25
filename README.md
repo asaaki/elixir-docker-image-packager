@@ -1,7 +1,7 @@
 
 # Elixir Docker Image Packager (EDIP)
 
-Attempt to create the possibly smallest docker image for an Elixir release.
+Attempt to create the possibly smallest Docker image for an Elixir release.
 
 <!--
   TOC generaged with doctoc: `npm install -g doctoc`
@@ -22,6 +22,11 @@ Attempt to create the possibly smallest docker image for an Elixir release.
     - [APPVER](#appver)
   - [Trigger build process](#trigger-build-process)
   - [Test it!](#test-it)
+- [How it works](#how-it-works)
+  - [Step 1: The stage environment](#step-1-the-stage-environment)
+    - [Phase 1: Building the stage image](#phase-1-building-the-stage-image)
+    - [Phase 2: Crafting the artifact](#phase-2-crafting-the-artifact)
+  - [Step 2: The final release image](#step-2-the-final-release-image)
 - [Caveats](#caveats)
 - [Does it work for Phoenix apps?](#does-it-work-for-phoenix-apps)
 - [Why?](#why)
@@ -148,6 +153,64 @@ If everything went well, your release should be up and running now.
 _(You might need to stop the container with `docker stop ...`,
 since the Erlang VM within the container doesn't like to react on Ctrl+C via docker at all.)_
 
+## How it works
+
+The whole build/packaging process happens in Docker containers.
+The only host dependencies are _docker_, _make_ and _sed._
+
+The process is split in 2 steps:
+
+- Step 1: The stage environment
+  > creating the release and preparing the file system artifact _(rootfs)_
+
+- Step 2: The final release image
+  > creating the release image from the artifact
+
+### Step 1: The stage environment
+
+#### Phase 1: Building the stage image
+
+Most work is done here.
+
+First the stage image is created. In the _dockerfiles/Dockerfile.stage_ you can adjust the steps for your desired
+environment. Add more packages if your build process needs them (like shared libraries for compilation).
+
+The stage image is based on [msaraiva/elixir-dev](https://registry.hub.docker.com/u/msaraiva/elixir-dev/) which uses
+[Alpine Linux](http://www.alpinelinux.org/) as a foundation. This distribution is really small, but the Docker images
+are insanely tiny, basically shipping only _[busybox](http://www.busybox.net/)_ and _[apk](http://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management)_ (Alpine's package manager).
+
+While the size is not the most important thing in this step it helps to reduce download times when pulling the images.
+Also I stick to it because of old habits: When I started with image crunching I came across Alpine's images first.
+
+Clearly the base image for staging could be anything, even an Ubuntu if it really has to be.
+
+#### Phase 2: Crafting the artifact
+
+In the run phase the heavy lifting happens.
+
+First it creates the release of your Elixir application you tenderly assembled.
+
+Then it gathers the information which other files in the system needs to be collected (shared libraries).
+In general it will be a libc (here it's from [musl](http://www.musl-libc.org/), which is also a much smaller variant
+than the more common _glibc_) and some other quiet essential libraries (at least _libcrypto_ and _libz_).
+
+After this it finally gathers all the files (your app, libraries/dependencies and busybox) and bundles everything into
+a beautiful wrapped tarball (_rootfs.tar.gz_) for the second step.
+
+### Step 2: The final release image
+
+This is a quick and simple step. Really, it is.
+
+Of course it's a very important one!
+
+With the tarball archive artifact from the previous step we can finally create our precious Docker image for
+production deployments.
+
+Initially grown from a _Dockerfile_ instruction set it is now just a single `docker import` command.
+
+Since the original base image was `scratch` (which is a totally empty rootfs) there is no difference in size between
+the two approaches. For simplicity I'll stick to the _docker import_ as it makes it easier to set the _CMD_ line.
+
 ## Caveats
 
 Avoid packages with C extensions (NIFs or ports to external binaries). This is not tested yet.
@@ -163,6 +226,8 @@ After a successful build you can test it like this:
 ```shell
 docker run --rm -e "PORT=4000" -p 4000:4000 local/release-image
 ```
+
+You need to set the `PORT` environment variable, otherwise the app will just crash (only in Phoenix's default config).
 
 ## Why?
 
