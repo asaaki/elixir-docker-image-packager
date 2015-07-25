@@ -29,7 +29,7 @@ Attempt to create the possibly smallest Docker image for an Elixir release.
 - [FAQ](#faq)
   - [Does it work for Phoenix apps?](#does-it-work-for-phoenix-apps)
   - [Why?](#why)
-  - [How different is it from _XY_?](#how-different-is-it-from-_xy_)
+  - [How different is it from ...?](#how-different-is-it-from-)
     - [msaraiva's "Erlang/Elixir on Alpine Linux"](#msaraivas-erlangelixir-on-alpine-linux)
   - [Is it free?](#is-it-free)
 
@@ -206,7 +206,7 @@ And there is no need for images with risky and unnecessary cruft in it.
 _*) Yes, I know, the Ubuntu base image is less than 200 MB, but when you start building your custom image onto it,
 then it will quickly grow as hell even if you try to be careful._
 
-### How different is it from _XY_?
+### How different is it from ...?
 
 I'm glad you asked! _(And if you find similar projects, point me to them; I'd like to have a look at them, too.)_
 
