@@ -84,6 +84,8 @@ Therefore the 20 MB can be seen as the lower limit of an image with the necessar
 
 ## Usage
 
+First clone the repository or download and unpack a zip archive.
+
 ### app
 
 Move/copy your application to `app/`.
