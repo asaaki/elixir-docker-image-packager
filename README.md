@@ -159,7 +159,7 @@ Nothing fancy here.
 
 Then it gathers the information which other files in the system needs to be collected (shared libraries).
 In general it will be a libc (here it's from [musl](http://www.musl-libc.org/), which is also a much smaller variant
-than the more common _glibc_) and some other quiet essential libraries (at least _libcrypto_ and _libz_).
+than the more common _glibc_) and some other quite essential libraries (at least _libcrypto_ and _libz_).
 
 After this it finally gathers all the files (your app, libraries/dependencies and busybox) and bundles everything into
 a beautiful wrapped tarball (_rootfs.tar.gz_) for the final step.
