@@ -1,7 +1,4 @@
-FROM msaraiva/elixir-dev:1.0.5
-
-RUN apk --update add gcc make libc-dev libgcc zsh vim erlang-eunit && rm -rf /var/cache/apk/*
-RUN mix local.hex --force && mix local.rebar --force
+FROM asaaki/elixir-base-dev:1.0.5
 
 WORKDIR /build
 COPY . /build

@@ -171,17 +171,9 @@ The process is split in 2 steps:
 
 Most work is done here.
 
-First the stage image is created. In the _dockerfiles/Dockerfile.stage_ you can adjust the steps for your desired
-environment. Add more packages if your build process needs them (like shared libraries for compilation).
-
-The stage image is based on [msaraiva/elixir-dev](https://registry.hub.docker.com/u/msaraiva/elixir-dev/) which uses
-[Alpine Linux](http://www.alpinelinux.org/) as a foundation. This distribution is really small, but the Docker images
-are insanely tiny, basically shipping only _[busybox](http://www.busybox.net/)_ and _[apk](http://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management)_ (Alpine's package manager).
-
-While the size is not the most important thing in this step it helps to reduce download times when pulling the images.
-Also I stick to it because of old habits: When I started with image crunching I came across Alpine's images first.
-
-Clearly the base image for staging could be anything, even an Ubuntu if it really has to be.
+First the stage image is created, which is based on [asaaki/elixir-base-dev](https://github.com/asaaki/elixir-base-dev-docker).
+In the _dockerfiles/Dockerfile.stage_ you can adjust the steps for your desired environment.
+Add more packages if your build process needs them (like shared libraries for compilation).
 
 #### Phase 2: Crafting the artifact
 
