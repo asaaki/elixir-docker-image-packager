@@ -23,12 +23,12 @@ ifdef TAG
 RELEASE_ENV       += -e "RELEASE_TAG=$(TAG)"
 endif
 
-all: build
+all: check-app build
 
 build: build-package
 
 check-app:
-	[ -d app ] || (echo "No 'app' directory present. Please create or move one.")
+	@[ -d app ] || (echo "No 'app' directory present. Please create or move one."; exit 1)
 
 build-stage:
 	$(DOCKER_BUILD) -f $(DOCKERFILE_STAGE) -t $(IMG_NAME_STAGE) .
