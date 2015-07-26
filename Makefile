@@ -13,25 +13,31 @@ STAGE_VOLUMES      = \
 	-v $(HOST_HEX_PKG_DIR):$(HEX_PKG_DIR) \
 	-v $(DOCKER_SOCK):$(DOCKER_SOCK) \
 	-v $(DOCKER):$(DOCKER)
+PREFIX            ?= local
+ifdef NAME
+RELEASE_ENV        = -e "RELEASE_NAME=$(NAME)"
+else
+RELEASE_ENV        = -e "RELEASE_PREFIX=$(PREFIX)"
+endif
+ifdef TAG
+RELEASE_ENV       += -e "RELEASE_TAG=$(TAG)"
+endif
 
 all: build
 
-build: build-package image-info
+build: build-package
 
 check-app:
 	[ -d app ] || (echo "No 'app' directory present. Please create or move one.")
-
-image-info:
-	@docker images
 
 build-stage:
 	$(DOCKER_BUILD) -f $(DOCKERFILE_STAGE) -t $(IMG_NAME_STAGE) .
 
 build-package: build-stage
-	$(DOCKER_RUN) $(STAGE_VOLUMES) -ti --privileged $(IMG_NAME_STAGE)
+	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) -ti --privileged $(IMG_NAME_STAGE)
 
 enter-stage: build-stage
-	$(DOCKER_RUN) $(STAGE_VOLUMES) -ti --privileged $(IMG_NAME_STAGE) /bin/sh
+	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) -ti --privileged $(IMG_NAME_STAGE) /bin/sh
 
 ### Helpers
 

@@ -44,12 +44,9 @@ $(ROOTFS_BIN): $(ROOTFS)
 $(ROOTFS): $(STAGE)
 	mkdir -p $@
 
-$(ROOTFS_APP_BIN): $(ROOTFS_APP) $(RELEASE_FILE)
+$(ROOTFS_APP_BIN): $(ROOTFS_APP)
 	tar -xzf $(RELEASE_FILE) -C $(ROOTFS_APP)
 	rm -rf $(ROOTFS_APP)/$(RELEASE)
 
 $(ROOTFS_APP): $(ROOTFS)
 		mkdir -p $@
-
-$(RELEASE_FILE):
-	$(MAKE) -f package/Makefile.app

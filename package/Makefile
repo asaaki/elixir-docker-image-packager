@@ -8,13 +8,13 @@ EXRM_ERR = The project as no 'exrm' dependency. Cannot proceed further
 all: image
 
 image: tarball
-	$(MAKE) -f package/Makefile.image
+	$(MAKE) -f package/make-image.mk
 
 tarball: app-release
-	$(MAKE) -f package/Makefile.tarball
+	$(MAKE) -f package/make-tarball.mk
 
 app-release: prerequisites
-	$(MAKE) -f package/Makefile.app
+	$(MAKE) -f package/make-app.mk
 
 prerequisites: exrm
 
