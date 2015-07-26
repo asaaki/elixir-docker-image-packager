@@ -1,7 +1,7 @@
 include package/shared.mk
 
 DOCKER_IMPORT      = docker import
-DOCKER_TAG         = docker tag
+DOCKER_TAG         = docker tag --force
 ifdef RELEASE_NAME
 IMAGE_NAME         = $(RELEASE_NAME):$(RELEASE_TAG)
 else
