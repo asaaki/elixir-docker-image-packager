@@ -1,16 +1,14 @@
 # container orchestration
 
-DOCKER             = $(shell which docker)
-DOCKER_SOCK        = /var/run/docker.sock
+DOCKER_BUILD      ?= docker build --rm
+DOCKER_RUN        ?= docker run --rm
 DOCKERFILES        = dockerfiles
 DOCKERFILE_STAGE   = $(DOCKERFILES)/Dockerfile.stage
-IMG_NAME_STAGE     = local/stage-image
-DOCKER_BUILD       = docker build --rm
-DOCKER_RUN         = docker run --rm
-HOST_HEX_PKG_DIR   = $(HOME)/.hex/packages
+IMG_NAME_STAGE    ?= local/stage-image
+HOST_HEX_PKG_DIR  ?= $(HOME)/.hex/packages
 HEX_PKG_DIR        = /root/.hex/packages
-HOST_TARBALLS_DIR  = $(shell pwd)/tarballs
-TARBALLS_DIR       = /stage/tarballs
+DOCKER             = $(shell which docker)
+DOCKER_SOCK        = /var/run/docker.sock
 STAGE_VOLUMES      = \
 	-v $(HOST_HEX_PKG_DIR):$(HEX_PKG_DIR) \
 	-v $(DOCKER_SOCK):$(DOCKER_SOCK) \
