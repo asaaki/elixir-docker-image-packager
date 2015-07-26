@@ -18,8 +18,9 @@ Attempt to create the possibly smallest Docker image for an Elixir release.
 - [Usage](#usage)
   - [app](#app)
   - [exrm](#exrm)
-  - [Trigger build process](#trigger-build-process)
-  - [Test it!](#test-it)
+  - [Build](#build)
+    - [NAME, TAG and PREFIX](#name-tag-and-prefix)
+  - [Test](#test)
 - [How it works](#how-it-works)
   - [Step 1: Create stage environment](#step-1-create-stage-environment)
   - [Step 2: Build application release](#step-2-build-application-release)
@@ -39,8 +40,8 @@ Attempt to create the possibly smallest Docker image for an Elixir release.
 
 ```
 ~/Development/elixir-docker-image-packager $ docker images
-REPOSITORY                    TAG     IMAGE ID      CREATED        VIRTUAL SIZE
-local-release/my_awesome_app  latest  ce86ea652636  some time ago  19.87 MB
+REPOSITORY            TAG     IMAGE ID      CREATED        VIRTUAL SIZE
+local/my_awesome_app  latest  ce86ea652636  some time ago  19.87 MB
 ```
 
 Okay, this release is a pretty dump Elixir app. Actually it is just a freshly
@@ -114,20 +115,46 @@ defmodule MyAwesomeApp.Mixfile do
 end
 ```
 
-### Trigger build process
+### Build
 
 ```shell
 make
 ```
 
-... and wait a bit.
+#### NAME, TAG and PREFIX
 
-### Test it!
+You can override specific parts of your Docker image name/tag.
+
+- `NAME`
+
+  You can specify the whole (repository) name:  
+  `make NAME=asaaki/my-totally-awesome-app`
+
+  Do not include any tag information here.
+
+- `TAG`
+
+  Per default the tag is the version of your app/release.
+  If this is not what you want, do this:  
+  `make TAG=1.2.3-omega`
+
+  (Also every build will tag itself as _latest_.)
+
+- `PREFIX`
+
+  In case you want to stick with the general name of your app, but want to use a different prefix than _local_:  
+  `make PREFIX=private.docker.com/my-namespace`
+
+  Keep in mind: a `NAME` takes precedence over a `PREFIX` if both are given.
+
+`NAME` or `PREFIX` are pretty useful if you work with other registries than Docker's Hub.
+
+### Test
 
 Start the app in foreground mode:
 
 ```shell
-docker run --rm -it local-release/my_awesome_app
+docker run --rm -it local/my_awesome_app
 ```
 
 If everything went well, your release should be up and running now.
