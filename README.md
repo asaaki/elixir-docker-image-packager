@@ -5,7 +5,7 @@ Attempt to create the possibly smallest Docker image for an Elixir release.
 
 ----
 
-Use it in your Elixir project with [mix-edip](https://github.com/asaaki/elixir-docker-image-packager),
+Use it in your Elixir project with [mix-edip](https://github.com/asaaki/mix-edip),
 a mix task to easily package your release image.
 
 ----
