@@ -34,7 +34,7 @@ build-stage:
 	$(DOCKER_BUILD) -f $(DOCKERFILE_STAGE) -t $(IMG_NAME_STAGE) .
 
 build-package: build-stage
-	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) -ti --privileged $(IMG_NAME_STAGE)
+	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) --privileged $(IMG_NAME_STAGE)
 
 enter-stage: build-stage
 	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) -ti --privileged $(IMG_NAME_STAGE) /bin/sh
