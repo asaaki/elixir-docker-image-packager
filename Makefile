@@ -1,6 +1,6 @@
 # container orchestration
 
-DOCKER_BUILD      ?= docker build --rm
+DOCKER_BUILD      ?= docker build --rm --pull
 DOCKER_RUN        ?= docker run --rm
 DOCKERFILES        = dockerfiles
 DOCKERFILE_STAGE   = $(DOCKERFILES)/Dockerfile.stage
@@ -25,7 +25,7 @@ endif
 
 all: check-app build
 
-build: build-package
+build: build-package remove-stage
 
 check-app:
 	@[ -d app ] || (echo "No 'app' directory present. Please create or move one."; exit 1)
@@ -38,6 +38,9 @@ build-package: build-stage
 
 enter-stage: build-stage
 	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) -ti --privileged $(IMG_NAME_STAGE) /bin/sh
+
+remove-stage:
+	$(DOCKER) rmi $(IMG_NAME_STAGE)
 
 ### Helpers
 
