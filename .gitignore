@@ -1,5 +1,4 @@
 /app
-/tarballs/*.gz
-dockerfiles/Dockerfile.release
+/tarballs
 erl_crash.dump
 *.ez
