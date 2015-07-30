@@ -13,14 +13,25 @@ STAGE_VOLUMES      = \
 	-v $(HOST_HEX_PKG_DIR):$(HEX_PKG_DIR) \
 	-v $(DOCKER_SOCK):$(DOCKER_SOCK) \
 	-v $(DOCKER):$(DOCKER)
+MIX_ENV           ?= prod
+RELEASE_ENV        = -e "MIX_ENV=$(MIX_ENV)"
 PREFIX            ?= local
 ifdef NAME
-RELEASE_ENV        = -e "RELEASE_NAME=$(NAME)"
+RELEASE_ENV       += -e "RELEASE_NAME=$(NAME)"
 else
-RELEASE_ENV        = -e "RELEASE_PREFIX=$(PREFIX)"
+RELEASE_ENV       += -e "RELEASE_PREFIX=$(PREFIX)"
 endif
 ifdef TAG
 RELEASE_ENV       += -e "RELEASE_TAG=$(TAG)"
+endif
+# false | true | only (no docker image)
+TARBALL           ?= false
+WITH_TARBALL       = $(if $(findstring $(TARBALL), true only),true,false)
+ifeq ($(WITH_TARBALL),true)
+STAGE_VOLUMES     += -v $(shell pwd)/tarballs:/stage/tarballs
+endif
+ifeq ($(TARBALL),only)
+RELEASE_ENV       += -e "SKIP_IMAGE=true"
 endif
 
 all: check-app build
@@ -40,7 +51,7 @@ enter-stage: build-stage
 	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) -ti --privileged $(IMG_NAME_STAGE) /bin/sh
 
 remove-stage:
-	$(DOCKER) rmi $(IMG_NAME_STAGE)
+	@$(DOCKER) rmi $(IMG_NAME_STAGE) >/dev/null
 
 ### Helpers
 

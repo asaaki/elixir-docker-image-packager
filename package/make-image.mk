@@ -15,7 +15,7 @@ RELEASE_SETTINGS   = --change 'CMD trap exit TERM; /app/bin/$(APPNAME) foregroun
 all: build build-info
 
 build:
-	cat $(ROOTFS_TARBALL) | \
+	cat $(NAMED_TARBALL) | \
 	$(DOCKER_IMPORT) $(RELEASE_SETTINGS) - $(IMAGE_NAME)
 	@$(DOCKER_TAG) $(IMAGE_NAME) $(IMAGE_NAME_LATEST)
 

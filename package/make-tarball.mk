@@ -21,16 +21,13 @@ info:
 postinfo:
 	@echo "... finished!"
 
-tarball: $(ROOTFS_TARBALL)
+tarball: $(NAMED_TARBALL) $(LINKED_TARBALL)
 
-$(ROOTFS_TARBALL): $(TARBALLS_DIR) $(ROOTFS_SYSTEM_FILES) $(ROOTFS_SH) $(ROOTFS_APP_BIN)
-	cd $(ROOTFS) && tar -czvf $@ .
+$(LINKED_TARBALL): $(NAMED_TARBALL)
+	cd $(@D) && ln -sf $(TIMESTAMP)/$(@F) $(@F)
 
-$(TARBALLS_DIR): $(STAGE_DIR)
-	mkdir -p $@
-
-$(STAGE_DIR):
-	mkdir -p $@
+$(NAMED_TARBALL): $(ROOTFS_SYSTEM_FILES) $(ROOTFS_SH) $(ROOTFS_APP_BIN)
+	mkdir -p $(@D) && cd $(ROOTFS) && tar -czvf $@ .
 
 $(ROOTFS_SYSTEM_FILES): $(ROOTFS)%: $(ROOTFS)
 	cp -vfa --parents $* $(ROOTFS)/
@@ -41,7 +38,10 @@ $(ROOTFS_SH): $(ROOTFS_BIN)
 $(ROOTFS_BIN): $(ROOTFS)
 	mkdir -p $@
 
-$(ROOTFS): $(STAGE)
+$(ROOTFS): $(STAGE_DIR)
+	mkdir -p $@
+
+$(STAGE_DIR):
 	mkdir -p $@
 
 $(ROOTFS_APP_BIN): $(ROOTFS_APP)
