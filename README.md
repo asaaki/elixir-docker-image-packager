@@ -26,7 +26,7 @@ a mix task to easily package your release image.
   - [app](#app)
   - [exrm](#exrm)
   - [Build](#build)
-    - [NAME, TAG and PREFIX](#name-tag-and-prefix)
+    - [NAME, TAG, PREFIX, and TARBALL](#name-tag-prefix-and-tarball)
   - [Test](#test)
 - [How it works](#how-it-works)
   - [Step 1: Create stage environment](#step-1-create-stage-environment)
@@ -128,7 +128,7 @@ end
 make
 ```
 
-#### NAME, TAG and PREFIX
+#### NAME, TAG, PREFIX, and TARBALL
 
 You can override specific parts of your Docker image name/tag.
 
@@ -155,6 +155,13 @@ You can override specific parts of your Docker image name/tag.
   Keep in mind: a `NAME` takes precedence over a `PREFIX` if both are given.
 
 `NAME` or `PREFIX` are pretty useful if you work with other registries than Docker's Hub.
+
+- `TARBALL`
+
+  Exposes the generated tarball of your rootfs for the release. You also can specify to only publish the tarball and
+  not to create a docker image at all (if you want to do it by yourself or in a different step of your pipeline).  
+  `make TARBALL=true`  
+  `make TARBALL=only`
 
 ### Test
 
