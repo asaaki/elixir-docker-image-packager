@@ -1,4 +1,4 @@
-FROM asaaki/elixir-base-dev:1.0.5
+FROM asaaki/elixir-base-dev:1.0.5-2
 
 WORKDIR /build
 COPY . /build
