@@ -1,7 +1,7 @@
 # container orchestration
 
 DOCKER_BUILD      ?= docker build --rm --pull
-DOCKER_RUN        ?= docker run --rm
+DOCKER_RUN        ?= docker run --rm --privileged
 DOCKERFILES        = dockerfiles
 DOCKERFILE_STAGE   = $(DOCKERFILES)/Dockerfile.stage
 IMG_NAME_STAGE    ?= local/stage-image
@@ -12,7 +12,7 @@ DOCKER_SOCK        = /var/run/docker.sock
 STAGE_VOLUMES      = \
 	-v $(HOST_HEX_PKG_DIR):$(HEX_PKG_DIR) \
 	-v $(DOCKER_SOCK):$(DOCKER_SOCK) \
-	-v $(DOCKER):$(DOCKER)
+	-v $(DOCKER):/usr/bin/docker
 MIX_ENV           ?= prod
 RELEASE_ENV        = -e "MIX_ENV=$(MIX_ENV)"
 PREFIX            ?= local
@@ -45,10 +45,10 @@ build-stage:
 	$(DOCKER_BUILD) -f $(DOCKERFILE_STAGE) -t $(IMG_NAME_STAGE) .
 
 build-package: build-stage
-	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) --privileged $(IMG_NAME_STAGE)
+	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) $(IMG_NAME_STAGE)
 
 enter-stage: build-stage
-	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) -ti --privileged $(IMG_NAME_STAGE) /bin/sh
+	$(DOCKER_RUN) $(STAGE_VOLUMES) $(RELEASE_ENV) -ti $(IMG_NAME_STAGE) /bin/sh
 
 remove-stage:
 	@$(DOCKER) rmi $(IMG_NAME_STAGE) >/dev/null
