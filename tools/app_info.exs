@@ -1,11 +1,9 @@
 defmodule AppInfo do
-  def config, do: Mix.Project.config
+  def name,    do: config |> Dict.get(:app)
+  def version, do: config |> Dict.get(:version)
+  def exrm,    do: deps |> Dict.has_key?(:exrm)
+  def phoenix, do: deps |> Dict.has_key?(:phoenix)
 
-  def app_name,    do: config |> Dict.get(:app)
-  def app_version, do: config |> Dict.get(:version)
-  def exrm,        do: config |> Dict.get(:deps) |> Dict.has_key?(:exrm)
-
-  def as_env do
-    "APPNAME=#{app_name} APPVER=#{app_version} EXRM=#{exrm}"
-  end
+  defp config, do: Mix.Project.config
+  defp deps,   do: config |> Dict.get(:deps)
 end

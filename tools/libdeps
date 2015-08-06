@@ -1,0 +1,3 @@
+#!/bin/sh
+CURRENT_DIR=$(cd ${0%/*} && pwd -P)
+$CURRENT_DIR/libdeps.exs 2>/dev/null

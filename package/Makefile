@@ -2,7 +2,7 @@
 
 include package/shared.mk
 
-EXRM     = $(shell $(APPINFO_RUNNER) "IO.puts AppInfo.exrm")
+EXRM     = $(shell $(APPINFO_RUNNER) exrm)
 EXRM_ERR = The project as no 'exrm' dependency. Cannot proceed further
 
 export TIMESTAMP         := $(shell date -u +"%Y%m%d_%H%M%S")
@@ -15,6 +15,7 @@ ifeq ($(SKIP_IMAGE),true)
 all: tarball
 	@echo "Only tarball created: $(subst $(STAGE_DIR)/,,$(NAMED_TARBALL))"
 	@echo "Create your own docker image with 'docker import' command."
+	@echo "See: <https://docs.docker.com/reference/commandline/import/>"
 else
 all: image
 endif

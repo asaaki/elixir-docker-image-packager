@@ -1,8 +1,12 @@
-APPINFO_RUNNER = cd app && mix run --no-compile --no-deps-check --no-start -r ../tools/app_info.exs -e
+# APPINFO_RUNNER = cd app && mix run --no-compile --no-deps-check --no-start -r ../tools/app_info.exs -e
+APPINFO_RUNNER = $(TOOLS_DIR)/app_info
 
-APPNAME        = $(shell $(APPINFO_RUNNER) "IO.puts AppInfo.app_name")
-APPVER         = $(shell $(APPINFO_RUNNER) "IO.puts AppInfo.app_version")
-APPDIR         = $(shell pwd)/app
+BUILD_DIR      = /build
+TOOLS_DIR      = $(BUILD_DIR)/tools
+
+APPDIR         = $(BUILD_DIR)/app
+APPNAME        = $(shell $(APPINFO_RUNNER) name)
+APPVER         = $(shell $(APPINFO_RUNNER) version)
 
 MIX_ENV       ?= prod
 RELEASE        = releases/$(APPVER)/$(APPNAME).tar.gz

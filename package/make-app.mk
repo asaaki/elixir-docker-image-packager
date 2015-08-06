@@ -2,6 +2,8 @@
 
 include package/shared.mk
 
+IN_APP_DIR = cd $(APPDIR) &&
+
 all: info release postinfo
 
 info:
@@ -13,13 +15,10 @@ postinfo:
 release: $(RELEASE_FILE)
 
 $(RELEASE_FILE): app-compile
-	cd $(APPDIR) && MIX_ENV=$(MIX_ENV) mix release
+	$(IN_APP_DIR) MIX_ENV=$(MIX_ENV) mix release
 
 app-compile: app-deps
-	cd $(APPDIR) && MIX_ENV=$(MIX_ENV) mix compile
+	$(IN_APP_DIR) MIX_ENV=$(MIX_ENV) mix compile
 
 app-deps:
-	cd $(APPDIR) && mix deps.get
-
-libs:
-	./libdeps.exs
+	$(IN_APP_DIR) mix deps.get

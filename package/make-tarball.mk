@@ -9,7 +9,7 @@ ROOTFS_APP     = $(ROOTFS)/app
 ROOTFS_APP_BIN = $(ROOTFS_APP)/bin
 
 BUSYBOX             = /bin/busybox
-SYSTEM_FILES        = $(shell ./tools/libdeps.exs 2>/dev/null)
+SYSTEM_FILES        = $(shell $(TOOLS_DIR)/libdeps)
 SOURCE_FILES        = $(SYSTEM_FILES) $(BUSYBOX)
 ROOTFS_SYSTEM_FILES = $(SOURCE_FILES:%=$(ROOTFS)%)
 
@@ -33,7 +33,7 @@ $(ROOTFS_SYSTEM_FILES): $(ROOTFS)%: $(ROOTFS)
 	cp -vfa --parents $* $(ROOTFS)/
 
 $(ROOTFS_SH): $(ROOTFS_BIN)
-	/bin/busybox --install -s $(ROOTFS_BIN)
+	$(BUSYBOX) --install -s $(ROOTFS_BIN)
 
 $(ROOTFS_BIN): $(ROOTFS)
 	mkdir -p $@
