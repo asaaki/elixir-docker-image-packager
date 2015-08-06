@@ -34,12 +34,15 @@ ifeq ($(TARBALL),only)
 RELEASE_ENV       += -e "SKIP_IMAGE=true"
 endif
 
-all: check-app build
+all: edip-info check-app build
 
-build: build-package remove-stage
+edip-info:
+	@echo "EDIP tool version: $(shell cat VERSION)"
 
 check-app:
 	@[ -d app ] || (echo "No 'app' directory present. Please create or move one."; exit 1)
+
+build: build-package remove-stage
 
 build-stage:
 	$(DOCKER_BUILD) -f $(DOCKERFILE_STAGE) -t $(IMG_NAME_STAGE) .
