@@ -81,8 +81,7 @@ mix deps.get edip && mix deps.compile edip
 ### Mix archive installation
 
 ```shell
-mix archive.install \
-  https://github.com/asaaki/mix-edip/releases/download/v0.3.0/edip-0.3.0.ez
+mix archive.install http://git.io/edip-0.3.0.ez
 ```
 
 Do not forget to add `exrm` to your project (in mix.exs):
