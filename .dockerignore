@@ -1,8 +1,0 @@
-.git
-.gitignore
-app/_build
-app/deps
-dockerfiles
-LICENSE
-Makefile
-README

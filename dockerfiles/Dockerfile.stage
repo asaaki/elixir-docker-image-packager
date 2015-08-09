@@ -1,6 +1,0 @@
-FROM asaaki/elixir-base-dev:1.0.5-2
-
-WORKDIR /build
-COPY . /build
-
-CMD ["make", "-f", "package/Makefile"]
