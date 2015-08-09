@@ -8,6 +8,8 @@ Attempt to create the possibly smallest Docker image for an Elixir release.
 Use it in your Elixir project with [mix-edip](https://github.com/asaaki/mix-edip),
 a mix task to easily package your release image.
 
+_(Note: This repo is for documentation only.)_
+
 ----
 
 <!--
@@ -23,16 +25,14 @@ a mix task to easily package your release image.
 - [Showdown](#showdown)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-  - [app](#app)
-  - [exrm](#exrm)
-  - [Build](#build)
-    - [NAME, TAG, PREFIX, and TARBALL](#name-tag-prefix-and-tarball)
+  - [Project dependency](#project-dependency)
+  - [Mix archive installation](#mix-archive-installation)
+  - [Without any mix task (CI environment)](#without-any-mix-task-ci-environment)
   - [Test](#test)
 - [How it works](#how-it-works)
-  - [Step 1: Create stage environment](#step-1-create-stage-environment)
-  - [Step 2: Build application release](#step-2-build-application-release)
-  - [Step 3: Craft rootfs artifact](#step-3-craft-rootfs-artifact)
-  - [Step 4: Create release image](#step-4-create-release-image)
+  - [Step 0: Downloading the EDIP tool](#step-0-downloading-the-edip-tool)
+  - [Step 1: Creating the artifact (tarball archive)](#step-1-creating-the-artifact-tarball-archive)
+  - [Step 2: Creating the final docker image](#step-2-creating-the-final-docker-image)
 - [Caveats](#caveats)
 - [FAQ](#faq)
   - [Why?](#why)
@@ -45,123 +45,87 @@ a mix task to easily package your release image.
 
 ## Showdown
 
-```
-~/Development/elixir-docker-image-packager $ docker images
-REPOSITORY            TAG     IMAGE ID      CREATED        VIRTUAL SIZE
-local/my_awesome_app  latest  ce86ea652636  some time ago  19.87 MB
-```
-
-Okay, this release is a pretty dump Elixir app. Actually it is just a freshly
-created one via `mix new app --module MyAwesomeApp --app my_awesome_app`.
-
-But the ~ 20 MB are basically:
-
-- busybox (~ 796 KB)
-- shared libraries (here musl-libc, libncurse, libcrypto, libz; ~ 3 MB)
-- Elixir release (~ 16.5 MB); most notably with:
-  - ERTS (erlang runtime system; ~ 5.6 MB)
-  - applications (including the dummy app; ~ 10.7 MB)
-
-Details about the applications:
-
-```
-$ du -hd1 /app/lib
-160.0K  /app/lib/iex-1.0.5
-124.0K  /app/lib/logger-1.0.5
-508.0K  /app/lib/syntax_tools-1.7
-216.0K  /app/lib/crypto-3.6
-1.5M    /app/lib/kernel-4.0
-3.1M    /app/lib/stdlib-2.5
-20.0K   /app/lib/my_awesome_app-0.1.0
-3.1M    /app/lib/elixir-1.0.5
-52.0K   /app/lib/consolidated
-1.6M    /app/lib/compiler-6.0
-396.0K  /app/lib/sasl-2.5
-```
-
-Therefore the 20 MB can be seen as the lower limit of an image with the necessary runtime tools.
+![Showdown (shell output of EDIP packaging)](showdown.png)
 
 ## Prerequisites
 
 - Elixir application (obviously ¯\\\_(ツ)\_/¯)
 - [exrm](https://github.com/bitwalker/exrm)
-- `make`
 - `docker` _(Yes, yes, I know ...)_
 
 ## Usage
 
-First clone the repository or download and unpack a zip archive.
+Either add [`mix-edip`](https://github.com/asaaki/mix-edip) as a dependency in your Elixir project or
+install the mix archive.
 
-```shell
-git clone https://github.com/asaaki/elixir-docker-image-packager.git
-cd elixir-docker-image-packager
-```
+In both cases you definitely need to add `exrm` as a project dependency!
 
-### app
+### Project dependency
 
-Move/copy your application to `app/`.
-
-For testing purposes just create a simple app with:
-
-```shell
-mix new app --module MyAwesomeApp --app my_awesome_app
-```
-
-### exrm
-
-Do not forget to add the `exrm` dependency:
+In mix.exs:
 
 ```elixir
-defmodule MyAwesomeApp.Mixfile do
-  use Mix.Project
-  # <snip>
-
-  defp deps do
-    [{:exrm, "~> 0.18"}]
-  end
+defp deps do
+  [
+    {:exrm, "~> 0.18"},
+    {:edip, "~> 0.3"}
+  ]
 end
 ```
 
-### Build
+Then run:
 
 ```shell
-make
+mix deps.get edip && mix deps.compile edip
 ```
 
-#### NAME, TAG, PREFIX, and TARBALL
+### Mix archive installation
 
-You can override specific parts of your Docker image name/tag.
+```shell
+mix archive.install https://github.com/asaaki/mix-edip/releases/download/v0.3.0/edip-0.3.0.ez
+```
 
-- `NAME`
+Do not forget to add `exrm` to your project (in mix.exs):
 
-  You can specify the whole (repository) name:  
-  `make NAME=asaaki/my-totally-awesome-app`
+```elixir
+defp deps do
+  [
+    {:exrm, "~> 0.18"}
+  ]
+end
+```
 
-  Do not include any tag information here.
+### Without any mix task (CI environment)
 
-- `TAG`
+If you want to keep your CI build setup clean, you do not neccessarily have to install Elixir and _mix-edip_ at all.
 
-  Per default the tag is the version of your app/release.
-  If this is not what you want, do this:  
-  `make TAG=1.2.3-omega`
+The docker commands are pretty simple.
+The information for application/release name and version might be less trivial.
+(If your CI server/service supports useful ENV vars you should use them.)
 
-  (Also every build will tag itself as _latest_.)
+**artifact creation:**
 
-- `PREFIX`
+```shell
+docker run --rm \
+  -v /path/to/my_awesome_app:/source \
+  -v /path/to/my_awesome_app/tarballs:/stage/tarballs \
+  asaaki/edip-tool:0.3.0
+```
 
-  In case you want to stick with the general name of your app, but want to use a different prefix than _local_:  
-  `make PREFIX=private.docker.com/my-namespace`
+**image creation:**
 
-  Keep in mind: a `NAME` takes precedence over a `PREFIX` if both are given.
+```shell
+cat /path/to/my_awesome_app/tarballs/my_awesome_app-0.1.0.tar.gz | \
+  docker import \
+    --change 'CMD trap exit TERM; /app/bin/my_awesome_app foreground & wait' - \
+    local/my_awesome_app:0.1.0
+```
 
-`NAME` or `PREFIX` are pretty useful if you work with other registries than Docker's Hub.
+**tagging with "latest":**
 
-- `TARBALL`
-
-  Exposes the generated tarball of your rootfs for the release. You also can specify to only publish the tarball and
-  not to create a docker image at all (if you want to do it by yourself or in a different step of your pipeline).  
-  `make TARBALL=true`  
-  `make TARBALL=only`
+```shell
+docker tag --force local/my_awesome_app:0.1.0 local/my_awesome_app:latest
+```
 
 ### Test
 
@@ -175,52 +139,45 @@ If everything went well, your release should be up and running now.
 
 ## How it works
 
-The whole build/packaging process happens in Docker containers.
-The only host dependencies are _docker_ and _make_.
+The whole build/packaging process happens in a Docker container.
+Therefore the only system dependency next to Elixir (for running the mix task) is _docker_ itself.
 
-Everything happens within a staging container.
+(If you plan to use EDIP tool in a CI environment you can manually trigger the artifact and image creation,
+then no Elixir in the host environment of the CI build is needed.)
 
-### Step 1: Create stage environment
+### Step 0: Downloading the EDIP tool
 
-First the stage image is created, which is based on [asaaki/elixir-base-dev](https://github.com/asaaki/elixir-base-dev-docker).
-In the _dockerfiles/Dockerfile.stage_ you can adjust the steps for your desired environment.
-Add more packages if your build process needs them (like shared libraries for compilation).
+This is just a docker image.
 
-If the image is ready, a container will be started directly afterwards.
+The setup of it can be found at [asaaki/docker-images: dockerfiles/edip-tool/0.3.0](https://github.com/asaaki/docker-images/tree/master/dockerfiles/edip-tool/0.3.0).
 
-### Step 2: Build application release
+At Docker Hub: <https://hub.docker.com/r/asaaki/edip-tool/>
 
-Within the running staging container the project release is built with exrm.
+Because nesting of docker containers can be sometimes quite cumbersome, we split the packaging into two steps, so we can
+stay on the host were the docker daemon is running.
 
-Nothing fancy here.
+_If you run everything already within containers keep in mind to properly propagate the docker environment with
+`--privileged` and volumes for the docker executable and the socket._
 
-### Step 3: Craft rootfs artifact
+### Step 1: Creating the artifact (tarball archive)
 
-Then it gathers the information which other files in the system needs to be collected (shared libraries).
-In general it will be a libc (here it's from [musl](http://www.musl-libc.org/), which is also a much smaller variant
-than the more common _glibc_) and some other quite essential libraries (at least _libcrypto_ and _libz_).
+In the first step only the so-called artifact is created. This is a tarball archive containing the application release
+and its system dependencies (because the Erlang VM is not statically linked and therefore needs some libraries).
 
-After this it finally gathers all the files (your release, libraries/dependencies and busybox) and bundles everything into
-a beautifully wrapped tarball (_rootfs.tar.gz_) for the final step.
+### Step 2: Creating the final docker image
 
-### Step 4: Create release image
+With the artifact from the previous step we can simply create a docker image of it.
 
-This is a quick and simple step. Really, it is.
-
-Of course it's a very important one!
-
-With the tarball archive artifact from the previous step we can finally create our precious Docker image for
-production deployments.
-
-_(For the curious: It's using `docker import`)_
+This is a pretty easy step (utilizing _docker import_).
 
 ## Caveats
 
 Beware of hex packages which have dependencies to the system (shared libraries or tools/binaries).
-If [step 2](#step-2-build-application-release) fails then it's probably because of missing stuff.
-Adjust the _dockerfiles/Dockerfile.stage_ to your needs: add packages (via _[apk](http://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management)_), download tools, make rainbows.
+If [step 1](#step-1-creating-the-artifact-tarball-archive) fails then it's probably because of missing stuff.
 
-Use `make enter-stage` to do all this stuff.
+Because the docker image is based on an _Alpine Linux_ it also might be possible that not everything you would need
+is available. Sometimes it can be manually compiled, as long as the library or application has no mandatory dependency
+to _glibc_ (Alpine is using _musl libc_ instead).
 
 ## FAQ
 
