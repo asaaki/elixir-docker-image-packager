@@ -49,9 +49,8 @@ _(Note: This repo is for documentation only.)_
 
 ## Prerequisites
 
-- Elixir application (obviously ¯\\\_(ツ)\_/¯)
-- [exrm](https://github.com/bitwalker/exrm)
-- `docker` _(Yes, yes, I know ...)_
+Next to your Elixir application you need _docker_ and most likely _mix-edip_.
+Also do not forget to add _exrm_ as a dependency in your project.
 
 ## Usage
 
